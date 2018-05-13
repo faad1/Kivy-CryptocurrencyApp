@@ -1,10 +1,9 @@
 import kivy
-
 kivy.require('1.9.0')
+
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 import requests
-
 
 
 class CryptoCurrency(GridLayout):
@@ -35,14 +34,13 @@ class CryptoCurrency(GridLayout):
 
         self.ids.coinList.data = [{"value": [w,x,y,z]} for w,x,y,z in zip(allCoins, price, marketCap,changeHr)]
 
-class TextApp(App):
+class CryptoCurrencyApp(App):
 
     # This returns the content we want in the window
     def build(self):
         # Return a label widget with Hello Kivy
         return CryptoCurrency();
 
-
 if __name__ == "__main__":
-    textapp = TextApp()
-    textapp.run()
+    cyrptoApp = CryptoCurrencyApp()
+    cyrptoApp.run()
