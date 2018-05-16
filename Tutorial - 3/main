@@ -1,0 +1,84 @@
+import kivy
+
+kivy.require('1.9.0')
+from kivy.app import App
+from kivy.uix.gridlayout import GridLayout
+import requests
+import math
+
+
+
+class CryptoCurrency(GridLayout):
+
+    def __init__(self, **kwargs):
+        super(CryptoCurrency, self).__init__(**kwargs)
+        self.topCoinsList()
+
+    def topCoinsList(self, searchText=None):
+
+        r = requests.get('https://api.coinmarketcap.com/v2/ticker/')
+
+        json_data = r.json()
+        keys = json_data['data'].keys()
+        allCoins = []
+        price = []
+        marketCap = []
+        changeHr = []
+
+        for i in keys:
+
+            #print("{}:  ${}".format(json_data['data'][i]['name'], json_data['data'][i]['quotes']['USD']['price']))
+
+            if searchText is not None:
+                if searchText == json_data['data'][i]['name'].capitalize():
+                    price.append("${}".format(json_data['data'][i]['quotes']['USD']['price']))
+                    marketCap.append("${}".format(json_data['data'][i]['quotes']['USD']['market_cap']))
+                    changeHr.append("{}%".format(json_data['data'][i]['quotes']['USD']['percent_change_24h']))
+                    allCoins.append("{}".format(json_data['data'][i]['name']))
+                    break
+            else:
+                price.append("${}".format(json_data['data'][i]['quotes']['USD']['price']))
+                marketCap.append("${}".format(json_data['data'][i]['quotes']['USD']['market_cap']))
+                changeHr.append("{}%".format(json_data['data'][i]['quotes']['USD']['percent_change_24h']))
+                allCoins.append("{}".format(json_data['data'][i]['name']))
+
+        self.ids.coinList.data = [{"value": [w,x,y,z]} for w,x,y,z in zip(allCoins, price, marketCap,changeHr)]
+
+    def allCoinsList(self):
+
+        grabIds = requests.get('https://api.coinmarketcap.com/v2/listings/')
+        idsData = grabIds.json()
+        totalRecords = len(idsData['data'])
+
+        allCoins = []
+        price = []
+        marketCap = []
+        changeHr = []
+        start = 1
+        limit = 100
+        for i in range(math.floor(totalRecords/100)):
+            r = requests.get("https://api.coinmarketcap.com/v2/ticker/?start={}&limit={}".format(start, limit))
+            coinData = r.json()
+            keys = coinData['data'].keys()
+
+            for j in keys:
+
+                    price.append("${}".format(coinData['data'][j]['quotes']['USD']['price']))
+                    marketCap.append("${}".format(coinData['data'][j]['quotes']['USD']['market_cap']))
+                    changeHr.append("{}%".format(coinData['data'][j]['quotes']['USD']['percent_change_24h']))
+                    allCoins.append("{}".format(coinData['data'][j]['name']))
+
+            start = start + 100
+        self.ids.coinList.data = [{"value": [w, x, y, z]} for w, x, y, z in zip(allCoins, price, marketCap, changeHr)]
+
+
+class CryptoCurrencyApp(App):
+
+    # This returns the content we want in the window
+    def build(self):
+        # Return a label widget with Hello Kivy
+        return CryptoCurrency();
+
+if __name__ == "__main__":
+    cyrptoApp = CryptoCurrencyApp()
+    cyrptoApp.run()
