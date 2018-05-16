@@ -1,0 +1,115 @@
+<EachItem@BoxLayout>:
+    canvas.before:
+        Color:
+            rgba: 0.5, 0.5, 0.5, 1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    value: []
+
+    GridLayout:
+        rows:1
+        cols:5
+        BoxLayout:
+            Label:
+                id: cryptoList
+                font_size:14
+                text_size: None, None
+                size_hint: 1,1
+                text: str(" ".join(root.value[0:1]))
+                mipmap: True
+            Label:
+                id: coinPrice
+                markup: True
+                font_size:14
+                text_size: None, None
+                size_hint: 1,1
+                text: str(" ".join(root.value[1:2])) + "[sub]USD[/sub]"
+                mipmap: True
+            Label:
+                id: marketCap
+                markup: True
+                font_size:14
+                text_size: None, None
+                size_hint:(1, 1)
+                text: str(" ".join(root.value[2:3])) + "[sub]USD[/sub]"
+                mipmap: True
+            Label:
+                id: change
+                font_size:14
+                text_size: None, None
+                size_hint: 1,1
+                text: str(" ".join(root.value[3:4]))
+                mipmap: True
+            Button:
+                text: "Details"
+
+<CryptoCurrency>:
+    rows: 1
+    spacing: 10
+    GridLayout:
+        cols: 1
+        rows: 3
+        spacing: 10
+        canvas:
+            Color:
+                rgba: 1, 1, 1, .1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        BoxLayout:
+            height: "50"
+            size_hint_y: None
+            TextInput:
+                id: coinSearch
+                hint_text: "Search Coin e.g. Bitcoin, Bitcoin Cash"
+                size_hint_x: 60
+                multiline: False
+            Button:
+                text: "Search"
+                on_press: root.topCoinsList(coinSearch.text)
+                size_hint_x: 20
+            Button:
+                text: "Show All"
+                on_press: root.allCoinsList()
+                size_hint_x: 10
+            Button:
+                text: "Show Top"
+                on_press: app.root.topCoinsList()
+                size_hint_x: 10
+        BoxLayout:
+            height: "50"
+            size_hint_y: None
+            GridLayout:
+                padding: 10, 0, 10, 0
+                canvas:
+                    Color:
+                        rgba: 1, 1, 1, .1
+                    Rectangle:
+                        size: self.size
+                rows:1
+                cols:5
+                Label:
+                    text: "Name"
+                Label:
+                    text: "Price"
+                Label:
+                    text: "Market Capital"
+                Label:
+                    text: "Chnage (24h)%"
+                Label:
+                    text: "Details"
+        RecycleView:
+            id: coinList
+            bar_width: 8
+            scroll_type: ['bars', 'content']
+            scroll_wheel_distance: 120
+            viewclass: 'EachItem' # custom Boxlayout
+            RecycleBoxLayout:
+                padding: 10, 0, 10, 0
+                size_hint_y: None
+                height: self.minimum_height
+                default_size: None, 40
+                default_size_hint: 1, None
+                orientation: 'vertical'
+                spacing: 3
